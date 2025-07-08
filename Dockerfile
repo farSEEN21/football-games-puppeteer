@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Копируем зависимости
-COPY package.json package-lock.json ./
+COPY package.json  ./
 RUN npm install
 
 # Копируем остальные файлы
