@@ -1,39 +1,30 @@
-const chromium = require('chrome-aws-lambda');
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 
 async function getGames() {
   const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ],
   });
 
   const page = await browser.newPage();
-  await page.goto("https://www.football.org.il/clubs/club/?club_id=7749", {
-    waitUntil: "networkidle2",
+
+  // 👉 Добавь настоящие заголовки
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'en-US,en;q=0.9',
   });
 
-  await page.waitForSelector(".games-list-container table");
-
-  const games = await page.evaluate(() => {
-    const rows = Array.from(document.querySelectorAll(".games-list-container table tbody tr"));
-    return rows.map(row => {
-      const cols = row.querySelectorAll("td");
-      return {
-        result: cols[0]?.innerText.trim(),
-        time: cols[1]?.innerText.trim(),
-        type: cols[2]?.innerText.trim(),
-        teams: cols[3]?.innerText.trim(),
-        round: cols[4]?.innerText.trim(),
-        field: cols[5]?.innerText.trim(),
-        date: cols[6]?.innerText.trim(),
-      };
-    });
+  await page.goto('https://www.football.org.il/clubs/club/?club_id=7749', {
+    waitUntil: 'networkidle2',
   });
 
+  const content = await page.content();
   await browser.close();
-  return games;
+
+  return content; // или парси дальше
 }
 
 module.exports = getGames;
