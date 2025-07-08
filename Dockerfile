@@ -25,7 +25,8 @@ WORKDIR /app
 
 # Копируем зависимости
 COPY package.json  ./
-RUN npm install
+RUN npm install --legacy-peer-deps
+
 
 # Копируем остальные файлы
 COPY . .
