@@ -10,9 +10,12 @@ app.get('/', (req, res) => {
 
 app.get('/games', async (req, res) => {
   try {
-const browser = await puppeteer.launch({
-  headless: true,
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
+    const html = await getGames(); 
+    res.send(html);
+  } catch (error) {
+    console.error("Ошибка при получении игр:", error);
+    res.status(500).send("Ошибка при получении игр");
+  }
 });
 
     const page = await browser.newPage();

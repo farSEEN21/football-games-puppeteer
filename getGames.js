@@ -27,4 +27,6 @@ async function getGames() {
   return content; // или парси дальше
 }
 
-module.exports = getGames;
+module.exports = async function getGames() {
+  return "<h1>Парсер временно не доступен — IP заблокирован Cloudflare</h1>";
+};
