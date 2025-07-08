@@ -1,6 +1,5 @@
 import express from 'express';
-import puppeteer from 'puppeteer-core';
-import chromium from 'chrome-aws-lambda';
+ import puppeteer from 'puppeteer';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,12 +10,10 @@ app.get('/', (req, res) => {
 
 app.get('/games', async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-    });
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
 
     const page = await browser.newPage();
     await page.goto('https://www.football.org.il/clubs/club/?club_id=7749', {
